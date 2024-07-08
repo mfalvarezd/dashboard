@@ -12,7 +12,7 @@ export default function ControlPanel() {
     /* Variable de estado y función de actualización */
   }
 
-  let [selected, setSelected] = useState(-1);
+  let [, setSelected] = useState(-1);
   {/* Variable de referencia a un elemento */ }
 
   const descriptionRef = useRef<HTMLDivElement>(null);
