@@ -16,6 +16,7 @@ function App() {
   let [indicators, setIndicators] = useState<JSX.Element[]>([]);
   let [rowsTable, setRowsTable] = useState([]);
   let [infoGraphic, setInfoGraphic] = useState([]);
+  let [informacion, setInformacion] = useState([]);
   let [selectedVariable, setSelectedVariable] = useState(-1);
   {
     /* Hook: useEffect */
@@ -153,10 +154,46 @@ function App() {
         return {"hour": hour,"precipitation":precipitation,"humidity":humidity,"clouds":clouds }
         
       })
+
+
+
+
+      let sun = xml.getElementsByTagName("sun")[0];
+      let riseUTC = sun.getAttribute("rise");
+      let setUTC = sun.getAttribute("set");
+  
+      // Función para convertir UTC a hora local de Ecuador (UTC-5)
+      const convertToEcuadorTime = (utcTime) => {
+        const dateUTC = new Date(utcTime);
+        const offset = -5 * 60; // Offset en minutos para UTC-5 (Ecuador)
+        const dateLocal = new Date(dateUTC.getTime() + offset * 60 * 1000);
+        return dateLocal.toLocaleString('es-EC', { timeZone: 'America/Guayaquil', hour12: false });
+      };
+  
+      let riseLocal = convertToEcuadorTime(riseUTC);
+      let setLocal = convertToEcuadorTime(setUTC);
+  
+      // Actualización del estado con la información convertida
+      let infSun = [
+        ['Salida del Sol', 'Rise', riseLocal],
+        ['Puesta del Sol', 'Set', setLocal]
+      ];
+  
+      let infElements = infSun.map((element, index) => (
+        <Indicator
+          key={index}
+          title={element[0]}
+          subtitle={element[1]}
+          value={element[2]}
+        />
+      ));
+  
+      setInformacion(infElements);
+
     
 
-    arrayObjects = arrayObjects.slice(0,8)
-    arrayObjectsG = arrayObjectsG.slice(0,8)
+     
+    
 
     {/* 3. Actualice de la variable de estado mediante la función de actualización */}
 
@@ -170,41 +207,40 @@ function App() {
 
   return (
     <Grid container spacing={5}>
-      <Grid xs={12} lg={2}>
+      <Grid xs={12} lg={3}>
         {indicators[0]}
         {/*<Indicator title="Precipitación" subtitle="Probabilidad" value={0.13} />*/}
       </Grid>
-      <Grid xs={12} lg={2}>
+      <Grid xs={12} lg={3}>
         {indicators[1]}
 
         {/* <Indicator title='Precipitación' subtitle='Probabilidad' value={0.13} /> */}
       </Grid>
-      <Grid xs={12} lg={2}>
+      <Grid xs={12}  lg={3}>
         {indicators[2]}
 
         {/* <Indicator title='Precipitación' subtitle='Probabilidad' value={0.13} /> */}
       </Grid>
-      <Grid xs={12} lg={2}>
-        <Indicator title="Precipitación" subtitle="Probabilidad" value={0.13} />
+      <Grid xs={12}  lg={3}>
+        
+
+        { <Indicator title='País' subtitle='Ecuador-Guayaquil' value= "UTC-5" /> }
       </Grid>
-      <Grid xs={12} lg={2}>
-        <Indicator title="Precipitación" subtitle="Probabilidad" value={0.13} />
+      
+      <Grid xs={12} md={4} lg={4}>
+        <Summary informacion={informacion}></Summary>
       </Grid>
-      <Grid xs={12} lg={2}>
-        <Indicator title="Precipitación" subtitle="Probabilidad" value={0.13} />
-      </Grid>
-      <Grid xs={12} lg={2}>
-        <Summary></Summary>
-      </Grid>
-      <Grid xs={12} md={6} lg={10}>
-      <BasicTable rows={rowsTable}></BasicTable>
-      </Grid>
-      <Grid xs={12} md={12} lg ={12}>
+      <Grid xs={12} md={8} lg ={8}>
         <ControlPanel onChange={setSelectedVariable}/>
       </Grid>
       <Grid xs={12} md={12} lg={12}>
         <WeatherChart selectedVariable={selectedVariable} graficos = {infoGraphic}></WeatherChart>
       </Grid>
+      <Grid xs={12} md={6} lg={12}>
+      <BasicTable rows={rowsTable}></BasicTable>
+      </Grid>
+      
+      
     </Grid>
   );
 }

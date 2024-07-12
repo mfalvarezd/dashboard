@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 interface Config {
     title?: String;
     subtitle?: String;
-    value: Number;
+    value: String;
 }
 
 export default function Indicator(config: Config) {

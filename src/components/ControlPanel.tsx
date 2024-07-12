@@ -51,7 +51,7 @@ export default function ControlPanel({onChange}) {
       name: "Nubosidad",
       description:
         "Grado de cobertura del cielo por nubes, afectando la visibilidad y la cantidad de luz solar recibida.",
-    },
+    }
   ];
 
   let options = items.map((item, key) => (
