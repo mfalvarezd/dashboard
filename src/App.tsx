@@ -14,7 +14,9 @@ function App() {
   }
 
   let [indicators, setIndicators] = useState<JSX.Element[]>([]);
-  let [rowsTable, setRowsTable] = useState([])
+  let [rowsTable, setRowsTable] = useState([]);
+  let [infoGraphic, setInfoGraphic] = useState([]);
+  let [selectedVariable, setSelectedVariable] = useState(-1);
   {
     /* Hook: useEffect */
   }
@@ -131,19 +133,36 @@ function App() {
 
       let arrayObjects = Array.from( xml.getElementsByTagName("time") ).map( (timeElement) =>  {
 					
-        let rangeHours = timeElement.getAttribute("from").split("T")[1] + " - " + timeElement.getAttribute("to").split("T")[1]
+        let rangeHours = timeElement.getAttribute("from").split("T")[1] + " - " + timeElement.getAttribute("to").split("T")[1];
 
-        let windDirection = timeElement.getElementsByTagName("windDirection")[0].getAttribute("deg") + " "+  timeElement.getElementsByTagName("windDirection")[0].getAttribute("code") 
- 
-        return { "rangeHours": rangeHours,"windDirection": windDirection }
+        let windDirection = timeElement.getElementsByTagName("windDirection")[0].getAttribute("deg") + " "+  timeElement.getElementsByTagName("windDirection")[0].getAttribute("code");
+        let precipitation = timeElement.getElementsByTagName("precipitation")[0].getAttribute("probability");
+        let humidity = timeElement.getElementsByTagName("humidity")[0].getAttribute("value");
+        let clouds = timeElement.getElementsByTagName("clouds")[0].getAttribute("all");
+        return { "rangeHours": rangeHours,"windDirection": windDirection,"precipitation":precipitation,"humidity":humidity,"clouds":clouds }
+    
+      })
 
-    })
+      //DECLARO LAS VARIABLES QUE IRAN PARA LA INFORMACION DEL GRAFICO
+      let arrayObjectsG = Array.from( xml.getElementsByTagName("time") ).map( (timeElement) =>  {
+					
+        let hour = timeElement.getAttribute("from").split("T")[1].substring(0, 5);  
+        let precipitation = timeElement.getElementsByTagName("precipitation")[0].getAttribute("probability");
+        let humidity = timeElement.getElementsByTagName("humidity")[0].getAttribute("value");
+        let clouds = timeElement.getElementsByTagName("clouds")[0].getAttribute("all");
+        return {"hour": hour,"precipitation":precipitation,"humidity":humidity,"clouds":clouds }
+        
+      })
+    
 
     arrayObjects = arrayObjects.slice(0,8)
+    arrayObjectsG = arrayObjectsG.slice(0,8)
 
     {/* 3. Actualice de la variable de estado mediante la función de actualización */}
 
     setRowsTable(arrayObjects)
+    setInfoGraphic(arrayObjectsG)
+
 
       
     })();
@@ -181,10 +200,10 @@ function App() {
       <BasicTable rows={rowsTable}></BasicTable>
       </Grid>
       <Grid xs={12} md={12} lg ={12}>
-        <ControlPanel />
+        <ControlPanel onChange={setSelectedVariable}/>
       </Grid>
       <Grid xs={12} md={12} lg={12}>
-        <WeatherChart></WeatherChart>
+        <WeatherChart selectedVariable={selectedVariable} graficos = {infoGraphic}></WeatherChart>
       </Grid>
     </Grid>
   );

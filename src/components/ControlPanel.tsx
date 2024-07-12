@@ -7,12 +7,12 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useState , useRef} from "react";
 
-export default function ControlPanel() {
+export default function ControlPanel({onChange}) {
   {
     /* Variable de estado y función de actualización */
   }
 
-  let [ , setSelected] = useState(-1);
+  let [selected , setSelected] = useState(-1);
   {/* Variable de referencia a un elemento */ }
 
   const descriptionRef = useRef<HTMLDivElement>(null);
@@ -21,14 +21,15 @@ export default function ControlPanel() {
     /* Manejador de eventos */
   }
 
-  const handleChange = (event: SelectChangeEvent) => {
-    let idx = parseInt(event.target.value);
+   const handleChange = (event: SelectChangeEvent) => {
+    const idx = parseInt(event.target.value);
     setSelected(idx);
-      {/* Modificación de la referencia */}
 
-      if (descriptionRef.current !== null) {
-        descriptionRef.current.innerHTML = (idx >= 0) ? items[idx]["description"] : ""
+    if (descriptionRef.current !== null) {
+      descriptionRef.current.innerHTML = idx >= 0 ? items[idx]["description"] : "";
     }
+
+    onChange(idx);  // Notifica al padre sobre el cambio
   };
   
   {
@@ -96,14 +97,13 @@ export default function ControlPanel() {
 
         {/* Muestra la descripción de la variable seleccionada */}
 
-             {/*<Typography mt={2} component="p" color="text.secondary">
+             {<Typography mt={2} component="p" color="text.secondary">
              {
                  (selected >= 0)?items[selected]["description"]:""
              }
-             </Typography>*/}
+             </Typography>}
 				
-        <Typography ref={descriptionRef} mt={2} component="p" color="text.secondary" />
-				
+
     </Paper>
   );
 }
